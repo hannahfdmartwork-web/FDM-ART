@@ -5,21 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AR Art</title>
 
-<!-- A-Frame + MindAR (image tracking) -->
+<!-- A-Frame + MindAR -->
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
 <style>
-body { margin: 0; overflow: hidden; }
-/* Optional: a tiny helper label while loading */
+body {
+margin: 0;
+overflow: hidden;
+}
+
 #hint {
 position: fixed;
-left: 12px;
 bottom: 12px;
+left: 12px;
 padding: 8px 10px;
-background: rgba(0,0,0,0.55);
+background: rgba(0, 0, 0, 0.55);
 color: white;
-font-family: -apple-system, system-ui, sans-serif;
+font-family: system-ui, -apple-system, sans-serif;
 font-size: 14px;
 border-radius: 8px;
 z-index: 9999;
@@ -36,29 +39,50 @@ vr-mode-ui="enabled: false"
 device-orientation-permission-ui="enabled: true"
 renderer="colorManagement: true; physicallyCorrectLights: true"
 >
-<!-- Load assets (your GIF) -->
+
+<!-- LOAD YOUR VIDEO -->
 <a-assets>
-<img id="overlay" src="overlay.gif" />
+<video
+id="overlayVideo"
+src="overlay..mov"
+autoplay
+loop
+muted
+playsinline>
+</video>
 </a-assets>
 
-<!-- Camera -->
-<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+<!-- CAMERA -->
+<a-camera
+position="0 0 0"
+look-controls="enabled: false">
+</a-camera>
 
-<!-- Attach content to the first target image (targetIndex 0) -->
+<!-- ATTACH VIDEO TO THE ARTWORK -->
 <a-entity mindar-image-target="targetIndex: 0">
-<!-- GIF overlay plane -->
-<a-plane
-src="#overlay"
+<a-video
+src="#overlayVideo"
 position="0 0 0"
 width="1"
-height="0.6"
-material="shader: flat; transparent: true;">
-</a-plane>
-</a-scene>
-<script>
-// Hide the helper hint once the target is found (nice UX).
-// (This is optional, but it helps people know what to do.)
-const hint = document.getElementById("hint");
+height="0.6">
+</a-video>
+</a-entity>
 
-// MindAR fires events on the mindar-image-target entity
-// when the target
+</a-scene>
+
+<script>
+const hint = document.getElementById("hint");
+const target = document.querySelector("[mindar-image-target]");
+
+if (target) {
+target.addEventListener("targetFound", () => {
+hint.style.display = "none";
+});
+
+target.addEventListener("targetLost", () => {
+hint.style.display = "block";
+});
+}
+</script>
+</body>
+</html>
